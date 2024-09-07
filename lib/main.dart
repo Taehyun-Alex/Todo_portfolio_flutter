@@ -5,13 +5,13 @@ import 'package:ts_todo_portfolio/widgets/todo_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
-import 'package:ts_todo_portfolio/services/i_datasource.dart';
 import 'package:ts_todo_portfolio/services/sql_datasource.dart';
+import 'package:uuid/uuid.dart';
 
 
 
 void main() {
-  Get.put<IDatasource>(SQDataSource());
+  Get.put<IDatasource>(SQLDataSource());
   runApp(const TodoApp());
 }
 
@@ -86,6 +86,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openAddTodo() {
+    final uuid = Uuid();
   showDialog(
     context: context,
     builder: (context) {
@@ -118,6 +119,7 @@ class _HomePageState extends State<HomePage> {
                         !_formKey.currentState!.validate()) return;
                         setState(() {
                           todoList.addTodo(Todo(
+                            id: uuid.v4(),
                             name: _controlName.text,
                             description: _controlDescription.text));
                         });

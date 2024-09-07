@@ -1,3 +1,5 @@
+import 'package:sqflite/sqflite.dart';
+
 import '../models/todo.dart';
 import '../services/i_datasource.dart';
 import 'package:sqflite/sql.dart';
@@ -49,8 +51,8 @@ Future<bool> edit(Todo model) async {
 }
 
 @override 
-Future<bool> read(Todo model) async {
-  return false;
+Future<Todo> read(String id) async {
+  //
 }
 
 }
