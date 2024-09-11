@@ -1,9 +1,15 @@
+import 'package:hive/hive.dart';
+
+@HiveType(typeId: 0)
 class Todo {
+  @HiveField(0)
   final String id;
+  @HiveField(1)
   final String name;
+  @HiveField(2)
   final String description;
+  @HiveField(3)
   final bool complete;
-  final Function(String message, int value)? create;
 
   Todo(
     {required this.id,
@@ -26,6 +32,10 @@ class Todo {
   }
 
   factory Todo.fromMap(Map<String, dynamic> map) {
+    bool? complete = map['complete'] is bool ? map['complete'] : null;
+
+    complete ??= map['complete'] == 1 ? true : false;
+
     return Todo( 
       id: map['id'].toString(),
       name: map['name'],
@@ -33,3 +43,5 @@ class Todo {
       complete: map['complete']);
   }
   }
+
+  class TodoAdapter 

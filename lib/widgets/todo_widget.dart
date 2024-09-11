@@ -41,12 +41,14 @@ class _TodoWidgetState extends State<TodoWidget> {
                 onChanged: (value) {
                   if (value == null) return;
                   setState(() {
-                    // Provider.of<TodoList>(context, listen: false).UpdateTodo(
-                    //   Todo(
-                    //     name: widget.todo.name,
-                    //     description: widget.todo.description,
-                    //   )
-                    // )
+                    Provider.of<TodoList>(context, listen: false).UpdateTodo(
+                      Todo(
+                        id: widget.todo.id,
+                        name: widget.todo.name,
+                        description: widget.todo.description,
+                        complete: value
+                      )
+                    );
                   });
                 },
               )

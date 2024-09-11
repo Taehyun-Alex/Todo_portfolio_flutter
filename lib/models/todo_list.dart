@@ -12,18 +12,19 @@ class TodoList extends ChangeNotifier {
 
   int get todoCount => _todos.length;
 
-  void refresh() async {
+  Future refresh() async {
     IDatasource dataSource = Get.find();
     RemoveAll();
     _todos.addAll(await dataSource.browse());
-  }
-
-  void addTodo(Todo todo) {
-    _todos.add(todo);
     notifyListeners();
   }
 
-   void RemoveAll(Todo todo) {
+  void addTodo(Todo todo) {
+    Get.find<IDatasource>().add(todo);
+    notifyListeners();
+  }
+
+   void RemoveAll() {
     _todos.clear();
     notifyListeners();
   }

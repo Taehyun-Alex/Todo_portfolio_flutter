@@ -2,7 +2,6 @@ import 'package:sqflite/sqflite.dart';
 
 import '../models/todo.dart';
 import '../services/i_datasource.dart';
-import 'package:sqflite/sql.dart';
 import 'package:path/path.dart';
 
 class SQLDataSource implements IDatasource {
@@ -15,9 +14,10 @@ class SQLDataSource implements IDatasource {
   }
 
   Future initialise() async {
+
   _database = await openDatabase(
     join(await getDatabasesPath(), 'todo_data.db'),
-    version: 1,
+    version: 2,
     onCreate: (db, version) {
       return db.execute(
         'CREATE TABLE IF NOT EXISTS todos (id INTEGER PRIMARY KEY, name TEXT, description TEXT, complete INTEGER)');
@@ -37,7 +37,13 @@ Future<List<Todo>> browse() async {
 
 @override 
 Future<bool> add(Todo model) async {
-  return false;
+  Map<String, dynamic> editedMap = model.toMap();
+  editedMap.remove('id');
+  if (await _database.insert('todos', editedMap) == 0) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 @override 
@@ -46,13 +52,13 @@ Future<bool> delete(Todo model) async {
 }
 
 @override 
-Future<bool> edit(Todo model) async {
-  return false;
+Future<Todo?> read(String id) async {
+  return null;
 }
 
 @override 
-Future<Todo> read(String id) async {
-  //
+Future<bool> edit(Todo model) async {
+  return false;
 }
 
 }

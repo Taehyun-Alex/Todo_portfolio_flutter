@@ -11,8 +11,11 @@ import 'package:uuid/uuid.dart';
 
 
 void main() {
-  Get.put<IDatasource>(SQLDataSource());
-  runApp(const TodoApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  Get.putAsync<IDatasource>(() => SQLDataSource.createAsync()).whenComplete(
+    () => runApp(
+      const TodoApp()));
+
 }
 
 class TodoApp extends StatelessWidget {
@@ -63,15 +66,20 @@ class _HomePageState extends State<HomePage> {
       body: Container(
         padding: const EdgeInsets.all(5),
         child: Consumer<TodoList>(
-          builder: (context, todoList, child) {
-            return ListView.builder(
-              itemCount: todoList.todoCount,
-              itemBuilder: (BuildContext context, int index) {
-                return TodoWidget(todo: todoList.todos[index]);
-              },);
-          },
-          ),
-      ),
+          builder: (context, todoListModel, child) {
+            return RefreshIndicator(
+              onRefresh: todoListModel.refresh,
+              child: ListView.builder(
+                itemCount: todoListModel.todoCount,
+                itemBuilder: (context, index) {
+                  return TodoWidget(
+                    todo: todoListModel.todos[index],
+                    );
+                }
+                ),
+                );
+          }
+          )),
       floatingActionButton: FloatingActionButton.large(
         onPressed: _openAddTodo,
         child: const Column(
@@ -86,7 +94,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openAddTodo() {
-    final uuid = Uuid();
+    //final uuid = Uuid();
   showDialog(
     context: context,
     builder: (context) {
@@ -119,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                         !_formKey.currentState!.validate()) return;
                         setState(() {
                           todoList.addTodo(Todo(
-                            id: uuid.v4(),
+                            id: '0',
                             name: _controlName.text,
                             description: _controlDescription.text));
                         });
