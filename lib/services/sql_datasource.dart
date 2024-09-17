@@ -1,5 +1,6 @@
-import 'package:sqflite/sqflite.dart';
-
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/todo.dart';
 import '../services/i_datasource.dart';
 import 'package:path/path.dart';
@@ -14,6 +15,12 @@ class SQLDataSource implements IDatasource {
   }
 
   Future initialise() async {
+    if (Platform.isWindows || Platform.isLinux || Platform.isMacOS) {
+      // Initialize FFI
+      sqfliteFfiInit();
+      // Use the FFI implementation for the database factory
+      databaseFactory = databaseFactoryFfi;
+    }
 
   _database = await openDatabase(
     join(await getDatabasesPath(), 'todo_data.db'),
@@ -29,36 +36,79 @@ class SQLDataSource implements IDatasource {
 Future<List<Todo>> browse() async {
   List<Map<String, dynamic>> maps = await _database.query('todos');
   return List.generate(maps.length, (index) {
-    maps[index]['complete'] =
-    (maps[index]['complete'] as int) == 0 ? false : true;
-    return Todo.fromMap(maps[index]);
+    final map = maps[index];
+      return Todo.fromMap(map, map['id']);
   });
 }
 
 @override 
 Future<bool> add(Todo model) async {
-  Map<String, dynamic> editedMap = model.toMap();
-  editedMap.remove('id');
-  if (await _database.insert('todos', editedMap) == 0) {
-    return false;
-  } else {
-    return true;
-  }
+  try {
+      await _database.insert('todos', model.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error adding ToDo: $e");
+      }
+      return false;
+    }
 }
 
 @override 
 Future<bool> delete(Todo model) async {
-  return false;
+  try {
+      int count = await _database.delete(
+        'todos',
+        where: 'id = ?',
+        whereArgs: [model.id],
+      );
+      return count > 0;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error deleting ToDo: $e");
+      }
+      return false;
+    }
 }
 
 @override 
 Future<Todo?> read(String id) async {
-  return null;
+  try {
+      List<Map<String, dynamic>> maps = await _database.query(
+        'todos',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+      if (maps.isNotEmpty) {
+        final map = maps[0];
+        return Todo.fromMap(map, id);
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error reading ToDo: $e");
+      }
+      return null;
+    }
 }
 
 @override 
 Future<bool> edit(Todo model) async {
-  return false;
+  try {
+      int count = await _database.update(
+        'todos',
+        model.toMap(),
+        where: 'id = ?',
+        whereArgs: [model.id],
+      );
+      return count > 0;
+    } catch (e) {
+      if (kDebugMode) {
+        print("Error editing ToDo: $e");
+      }
+      return false;
+    }
 }
 
 }

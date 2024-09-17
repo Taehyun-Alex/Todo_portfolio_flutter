@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1050188445507",
+    "project_id": "ts-todo-portfolio-cb8c3",
+    "storage_bucket": "ts-todo-portfolio-cb8c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1050188445507:android:2d5f62d8efb758ebf721f6",
+        "android_client_info": {
+          "package_name": "com.example.ts_todo_portfolio"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBkfYTW9i1XCS4gGvu9pDlxTRacR_M-2wY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
