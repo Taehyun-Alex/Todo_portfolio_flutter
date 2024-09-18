@@ -1,3 +1,4 @@
+import 'package:ts_todo_portfolio/services/hive_datasource.dart';
 import 'package:ts_todo_portfolio/services/i_datasource.dart';
 import './models/todo.dart';
 import 'package:ts_todo_portfolio/models/todo_list.dart';
@@ -6,16 +7,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:ts_todo_portfolio/services/sql_datasource.dart';
-import 'package:uuid/uuid.dart';
-
 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  Get.putAsync<IDatasource>(() => SQLDataSource.createAsync()).whenComplete(
-    () => runApp(
-      const TodoApp()));
-
+  // Get.putAsync<IDataSource>(() => SQLDataSource.createAsync()).whenComplete(
+  //   () => runApp(
+  //     const TodoApp()));
+  Get.putAsync<IDataSource>(() => HiveDatasource.createAsync()).whenComplete(
+      () => runApp(const TodoApp(),
+      ),
+    );
 }
 
 class TodoApp extends StatelessWidget {
@@ -94,7 +96,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _openAddTodo() {
-    //final uuid = Uuid();
+  _controlName.clear();
+  _controlDescription.clear();
   showDialog(
     context: context,
     builder: (context) {

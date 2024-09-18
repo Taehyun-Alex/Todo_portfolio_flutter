@@ -1,6 +1,6 @@
 import '../models/todo.dart';
 
-abstract class IDatasource {
+abstract class IDataSource {
   Future<List<Todo>> browse();
   Future<bool> add(Todo model);
   Future<bool> delete(Todo model);

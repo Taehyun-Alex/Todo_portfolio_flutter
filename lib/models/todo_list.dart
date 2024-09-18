@@ -12,20 +12,19 @@ class TodoList extends ChangeNotifier {
 
   int get todoCount => _todos.length;
 
-  Future refresh() async {
-    IDatasource dataSource = Get.find();
-    RemoveAll();
+  Future refresh() async{
+    IDataSource dataSource = Get.find();
+    removeAllTodo();
     _todos.addAll(await dataSource.browse());
     notifyListeners();
   }
 
-  void addTodo(Todo todo) {
-    Get.find<IDatasource>().add(todo);
+  void addTodo(Todo todo){
+   Get.find<IDataSource>().add(todo);
     notifyListeners();
   }
-
-  void removeTodo(Todo todo) async {
-    bool isDeleted = await Get.find<IDatasource>().delete(todo);
+  void removeTodo(Todo todo) async{
+    bool isDeleted = await Get.find<IDataSource>().delete(todo);
 
     if (isDeleted) {
       _todos.remove(todo);
@@ -34,9 +33,29 @@ class TodoList extends ChangeNotifier {
       print("Failed to delete the todo.");
     }
   }
-
-  void removeAllTodo() {
-    
+  void removeAllTodo(){
+    _todos.clear();
   }
+  void updateTodo(Todo updatedTodo) async {
+  // Use the 'id' field to find the todo to update
+  int index = _todos.indexWhere((todo) => todo.id == updatedTodo.id);
+
+  if (index != -1) {
+    // Update the local list first
+    _todos[index] = updatedTodo;
+
+    // Call the IDataSource's edit method to persist the changes
+    bool isEdited = await Get.find<IDataSource>().edit(updatedTodo);
+
+    if (isEdited) {
+      // If edit is successful, notify listeners to refresh the UI
+      notifyListeners();
+    } else {
+      print("Failed to edit the todo.");
+    }
+  } else {
+    print("Todo not found.");
+  }
+}
 
 }
