@@ -24,23 +24,19 @@ class TodoList extends ChangeNotifier {
     notifyListeners();
   }
 
-   void RemoveAll() {
-    _todos.clear();
-    notifyListeners();
-  }
+  void removeTodo(Todo todo) async {
+    bool isDeleted = await Get.find<IDatasource>().delete(todo);
 
-   void Remove(Todo todo) {
-    _todos.remove(todo);
-    notifyListeners();
-  }
-
-  void UpdateTodo(Todo todo) {
-    int index = _todos.indexWhere(
-      (element) => element.name.toLowerCase() == todo.name.toLowerCase(),
-      );
-      _todos[index] = todo;
+    if (isDeleted) {
+      _todos.remove(todo);
       notifyListeners();
+    } else {
+      print("Failed to delete the todo.");
+    }
   }
-  
+
+  void removeAllTodo() {
+    
+  }
 
 }
