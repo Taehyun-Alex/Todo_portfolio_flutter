@@ -19,10 +19,18 @@ class TodoList extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addTodo(Todo todo){
-   Get.find<IDataSource>().add(todo);
-    notifyListeners();
-  }
+  void addTodo(Todo todo) async {
+  // Add to the local list first
+  _todos.add(todo);
+  
+  // Persist the change
+  await Get.find<IDataSource>().add(todo);
+  
+  // Notify listeners about the change
+  notifyListeners();
+}
+
+
   void removeTodo(Todo todo) async{
     bool isDeleted = await Get.find<IDataSource>().delete(todo);
 
