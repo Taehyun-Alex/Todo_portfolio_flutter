@@ -43,7 +43,7 @@ class Todo {
       id: map['id'].toString(),
       name: map['name'],
       description: map['description'],
-      complete: map['complete']);
+      complete: map['complete'] == 1 ? true : map['complete'] == true);
   }
 }
 class TodoAdapter extends TypeAdapter<Todo>{
